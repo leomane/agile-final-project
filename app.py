@@ -3,11 +3,11 @@ import json
 import os
 import random
 import socketserver
+import urllib.request
 from http.server import SimpleHTTPRequestHandler
 from typing import Optional, Tuple
 
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
-print(os.getenv("OPENAI_API_KEY"))
 
 
 def load_dotenv_if_present() -> None:
@@ -206,13 +206,28 @@ def generate_ai_image(animal_a: str, animal_b: str, species_name: str) -> Tuple[
                 prompt=prompt,
                 size="1024x1024",
                 quality="standard",
-                response_format="b64_json",
                 n=1,
             )
-            image_b64 = response.data[0].b64_json
+            choice = response.data[0]
+            image_b64 = getattr(choice, "b64_json", None)
             if image_b64:
                 return f"data:image/png;base64,{image_b64}", "ai"
-            print("OpenAI image generation returned no base64 payload; using fallback SVG.")
+
+            image_url = getattr(choice, "url", None)
+            if image_url:
+                try:
+                    with urllib.request.urlopen(image_url, timeout=15) as resp:
+                        content_type = resp.headers.get("Content-Type", "image/png")
+                        downloaded = resp.read()
+                    downloaded_b64 = base64.b64encode(downloaded).decode("utf-8")
+                    return f"data:{content_type};base64,{downloaded_b64}", "ai"
+                except Exception as fetch_exc:  # noqa: BLE001
+                    print(
+                        "OpenAI image URL fetch failed; using fallback SVG. "
+                        f"Error: {fetch_exc}"
+                    )
+
+            print("OpenAI image generation returned no usable payload; using fallback SVG.")
         except Exception as exc:  # noqa: BLE001
             print(f"OpenAI image generation failed, falling back to SVG: {exc}")
     else:
