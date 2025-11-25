@@ -4,9 +4,7 @@ import os
 import random
 import socketserver
 from http.server import SimpleHTTPRequestHandler
-from typing import Optional, Tuple
-
-from openai import OpenAI
+from typing import Tuple
 
 ANIMALS = [
     "Lion",
@@ -63,17 +61,6 @@ PUNCHLINES = [
 ]
 
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
-OPENAI_MODEL = os.environ.get("OPENAI_IMAGE_MODEL", "gpt-image-1")
-
-
-def make_openai_client() -> Optional[OpenAI]:
-    api_key = os.environ.get("OPENAI_API_KEY")
-    if not api_key:
-        return None
-    base_url = os.environ.get("OPENAI_BASE_URL")
-    if base_url:
-        return OpenAI(api_key=api_key, base_url=base_url)
-    return OpenAI(api_key=api_key)
 
 
 def mash_name(animal_a: str, animal_b: str) -> str:
@@ -133,30 +120,6 @@ def generate_svg(animal_a: str, animal_b: str, species_name: str) -> str:
     return f"data:image/svg+xml;base64,{encoded}"
 
 
-def generate_ai_image(animal_a: str, animal_b: str, species_name: str) -> Tuple[str, str]:
-    prompt = (
-        "Create a bright, imaginative poster illustration of a fictional animal that "
-        f"combines a {animal_a} and a {animal_b}. Focus on a friendly, whimsical style with "
-        "bold colors, studio lighting, and a simple background. Include a small caption of "
-        f"the name '{species_name}' in the lower area."
-    )
-    client = make_openai_client()
-    if client:
-        try:
-            response = client.images.generate(
-                model=OPENAI_MODEL,
-                prompt=prompt,
-                size="1024x1024",
-                quality="standard",
-                n=1,
-            )
-            image_b64 = response.data[0].b64_json
-            return f"data:image/png;base64,{image_b64}", "ai"
-        except Exception as exc:  # noqa: BLE001
-            print(f"OpenAI image generation failed, falling back to SVG: {exc}")
-    return generate_svg(animal_a, animal_b, species_name), "fallback"
-
-
 class MashupHandler(SimpleHTTPRequestHandler):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, directory=BASE_DIR, **kwargs)
@@ -170,12 +133,11 @@ class MashupHandler(SimpleHTTPRequestHandler):
         if self.path == "/api/spin":
             primary, secondary = random.sample(ANIMALS, 2)
             species_name = mash_name(primary, secondary)
-            image_data, source = generate_ai_image(primary, secondary, species_name)
+            image_data = generate_svg(primary, secondary, species_name)
             payload = {
                 "animals": [primary, secondary],
                 "speciesName": species_name,
                 "imageData": image_data,
-                "imageSource": source,
             }
             body = json.dumps(payload).encode("utf-8")
             self.send_response(200)

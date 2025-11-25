@@ -64,7 +64,7 @@ function stopWheelSpin(finalAnimals) {
 
 async function spinRoulette() {
   spinButton.disabled = true;
-    statusEl.textContent = 'Spinning both wheels and painting with AI...';
+  statusEl.textContent = 'Spinning both wheels and painting...';
   startWheelSpin();
 
   try {
@@ -80,11 +80,7 @@ async function spinRoulette() {
     speciesNameEl.textContent = payload.speciesName;
     pairingEl.textContent = `${payload.animals[0]} + ${payload.animals[1]} = instant chaos.`;
     posterEl.src = payload.imageData;
-    const sourceLabel =
-      payload.imageSource === 'ai'
-        ? 'AI image generated'
-        : 'Fallback illustration (API unavailable)';
-    statusEl.textContent = `Generation complete — ${sourceLabel}.`;
+    statusEl.textContent = 'Generation complete — meet your new buddy!';
   } catch (error) {
     stopWheelSpin([
       'Network gremlin',
