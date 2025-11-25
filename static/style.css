@@ -96,6 +96,35 @@ h2 {
   font-size: 15px;
 }
 
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  border-radius: 999px;
+  font-weight: 700;
+  margin-top: 10px;
+}
+
+.status-pill {
+  background: rgba(34, 211, 238, 0.12);
+  color: #e0f2fe;
+  border: 1px solid rgba(34, 211, 238, 0.35);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+}
+
+.status-on {
+  background: rgba(34, 211, 238, 0.16);
+  border-color: rgba(34, 211, 238, 0.6);
+  color: #e0f2fe;
+}
+
+.status-off {
+  background: rgba(139, 92, 246, 0.12);
+  border-color: rgba(139, 92, 246, 0.55);
+  color: #ede9fe;
+}
+
 .illustration {
   display: grid;
   gap: 18px;
