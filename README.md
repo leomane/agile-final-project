@@ -12,6 +12,16 @@ export OPENAI_API_KEY=your_key_here  # required for real AI images
 python app.py  # defaults to http://localhost:8000
 ```
 
+On Windows PowerShell, set the key for the current session with:
+
+```powershell
+$env:OPENAI_API_KEY="your_key_here"
+python app.py
+```
+
+You can also drop a `.env` file (same folder as `app.py`) containing `OPENAI_API_KEY=your_key_here` and the server will load it
+automatically at startup.
+
 If `openai` isn't installed or the key/base URL are missing, the server will stay up and fall back to the built-in SVG illustrator instead of erroring out. The OpenAI status pill in the UI will call this out with a short reason (e.g., "Missing 'openai' package" or "OPENAI_API_KEY not set") so you know what to fix.
 
 Open the printed URL in your browser and click **Spin the wheels** to generate a new creature. The API endpoint lives at `/api/spin` and returns the selected animals, the blended species name, and a base64-encoded PNG (AI) or SVG (fallback) poster. The OpenAI model defaults to `gpt-image-1`; override with `OPENAI_IMAGE_MODEL` or point at a compatible proxy with `OPENAI_BASE_URL`.

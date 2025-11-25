@@ -6,10 +6,49 @@ import socketserver
 from http.server import SimpleHTTPRequestHandler
 from typing import Optional, Tuple
 
+BASE_DIR = os.path.abspath(os.path.dirname(__file__))
+
+
+def load_dotenv_if_present() -> None:
+    """Load environment variables from a local .env file if one exists.
+
+    This keeps the app dependency-free while still supporting the common
+    pattern of storing API keys in a .env file. Values already set in the
+    process environment are left untouched.
+    """
+
+    dotenv_path = os.path.join(BASE_DIR, ".env")
+    if not os.path.exists(dotenv_path):
+        return
+
+    loaded_keys = []
+    try:
+        with open(dotenv_path, "r", encoding="utf-8") as handle:
+            for line in handle:
+                stripped = line.strip()
+                if not stripped or stripped.startswith("#"):
+                    continue
+                if "=" not in stripped:
+                    continue
+                key, value = stripped.split("=", 1)
+                key = key.strip()
+                if not key or key in os.environ:
+                    continue
+                value = value.strip().strip("'\"")
+                os.environ[key] = value
+                loaded_keys.append(key)
+    except OSError as exc:  # pragma: no cover - non-critical helper
+        print(f"Warning: Unable to read {dotenv_path}: {exc}")
+    else:
+        if loaded_keys:
+            print(f"Loaded {len(loaded_keys)} values from .env: {', '.join(loaded_keys)}")
+
 try:
     from openai import OpenAI
 except ImportError:  # pragma: no cover - optional dependency
     OpenAI = None
+
+load_dotenv_if_present()
 
 ANIMALS = [
     "Lion",
@@ -65,19 +104,19 @@ PUNCHLINES = [
     "Makes its own sound effects",
 ]
 
-BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 OPENAI_MODEL = os.environ.get("OPENAI_IMAGE_MODEL", "gpt-image-1")
 
 
 def openai_available() -> bool:
-    return OpenAI is not None and bool(os.environ.get("OPENAI_API_KEY"))
+    return OpenAI is not None and bool(os.environ.get("OPENAI_API_KEY", "").strip())
 
 
 def openai_status() -> Tuple[bool, str]:
     if OpenAI is None:
         return False, "Missing 'openai' package (pip install openai)"
-    if not os.environ.get("OPENAI_API_KEY"):
-        return False, "OPENAI_API_KEY not set"
+    api_key = os.environ.get("OPENAI_API_KEY", "").strip()
+    if not api_key:
+        return False, "OPENAI_API_KEY not set (export/set it or place it in .env)"
     return True, "Configured"
 
 
@@ -85,7 +124,7 @@ def make_openai_client() -> Optional[OpenAI]:
     if OpenAI is None:
         print("OpenAI client unavailable: package not installed. Serving fallback art.")
         return None
-    api_key = os.environ.get("OPENAI_API_KEY")
+    api_key = os.environ.get("OPENAI_API_KEY", "").strip()
     if not api_key:
         return None
     base_url = os.environ.get("OPENAI_BASE_URL")
