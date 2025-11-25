@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Splice Safari</title>
+    <link rel="stylesheet" href="/static/style.css" />
+    <link rel="icon" type="image/svg+xml" href="/static/placeholder.svg" />
+  </head>
+  <body>
+    <main class="page">
+      <header class="hero">
+        <div>
+          <p class="eyebrow">AI roulette x animal mashups</p>
+          <h1>Spin for a weird new creature</h1>
+          <p class="lede">
+            Tap the handles to spin two animal roulette wheels, then let our tiny
+            on-device AI paint a poster of the chaotic new species it invents.
+          </p>
+          <button id="spin" class="primary">Spin the wheels</button>
+          <p id="status" class="status">Ready to concoct a critter.</p>
+        </div>
+        <div class="illustration">
+          <div class="wheel" id="wheel-1">
+            <div class="wheel-window">
+              <span class="wheel-value">Lion</span>
+            </div>
+            <div class="wheel-handle">▶</div>
+          </div>
+          <div class="wheel" id="wheel-2">
+            <div class="wheel-window">
+              <span class="wheel-value">Panda</span>
+            </div>
+            <div class="wheel-handle">▶</div>
+          </div>
+        </div>
+      </header>
+
+      <section class="result" aria-live="polite">
+        <div class="result-card">
+          <div class="result-text">
+            <p class="eyebrow">New species</p>
+            <h2 id="species-name">Waiting for the spin...</h2>
+            <p id="pairing" class="lede">
+              Pick two animals above to generate a mashup poster.
+            </p>
+          </div>
+            <div class="image-frame">
+              <img id="poster" alt="AI animal mashup poster" src="/static/placeholder.svg" />
+            </div>
+        </div>
+      </section>
+    </main>
+
+    <script src="/static/app.js"></script>
+  </body>
+</html>
