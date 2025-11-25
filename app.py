@@ -106,6 +106,8 @@ PUNCHLINES = [
 ]
 
 OPENAI_MODEL = os.environ.get("OPENAI_IMAGE_MODEL", "gpt-image-1")
+OPENAI_IMAGE_QUALITY = os.environ.get("OPENAI_IMAGE_QUALITY", "high").lower()
+ALLOWED_OPENAI_QUALITIES = {"low", "medium", "high", "auto"}
 
 
 def openai_available() -> bool:
@@ -198,6 +200,14 @@ def generate_ai_image(animal_a: str, animal_b: str, species_name: str) -> Tuple[
         "bold colors, studio lighting, and a simple background. Include a small caption of "
         f"the name '{species_name}' in the lower area."
     )
+    if OPENAI_IMAGE_QUALITY in ALLOWED_OPENAI_QUALITIES:
+        quality = OPENAI_IMAGE_QUALITY
+    else:
+        quality = "high"
+        print(
+            "Invalid OPENAI_IMAGE_QUALITY value; expected one of "
+            f"{sorted(ALLOWED_OPENAI_QUALITIES)}. Using 'high'."
+        )
     client = make_openai_client()
     if client:
         try:
@@ -205,7 +215,7 @@ def generate_ai_image(animal_a: str, animal_b: str, species_name: str) -> Tuple[
                 model=OPENAI_MODEL,
                 prompt=prompt,
                 size="1024x1024",
-                quality="standard",
+                quality=quality,
                 n=1,
             )
             choice = response.data[0]
