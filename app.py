@@ -73,6 +73,14 @@ def openai_available() -> bool:
     return OpenAI is not None and bool(os.environ.get("OPENAI_API_KEY"))
 
 
+def openai_status() -> Tuple[bool, str]:
+    if OpenAI is None:
+        return False, "Missing 'openai' package (pip install openai)"
+    if not os.environ.get("OPENAI_API_KEY"):
+        return False, "OPENAI_API_KEY not set"
+    return True, "Configured"
+
+
 def make_openai_client() -> Optional[OpenAI]:
     if OpenAI is None:
         print("OpenAI client unavailable: package not installed. Serving fallback art.")
@@ -167,6 +175,9 @@ def generate_ai_image(animal_a: str, animal_b: str, species_name: str) -> Tuple[
             print("OpenAI image generation returned no base64 payload; using fallback SVG.")
         except Exception as exc:  # noqa: BLE001
             print(f"OpenAI image generation failed, falling back to SVG: {exc}")
+    else:
+        available, reason = openai_status()
+        print(f"OpenAI client unavailable; fallback illustrator engaged. Reason: {reason}")
     return generate_svg(animal_a, animal_b, species_name), "fallback"
 
 
@@ -180,9 +191,11 @@ class MashupHandler(SimpleHTTPRequestHandler):
             return super().do_GET()
 
         if self.path == "/api/config":
+            available, reason = openai_status()
             payload = {
-                "openaiConfigured": openai_available(),
-                "model": OPENAI_MODEL if openai_available() else None,
+                "openaiConfigured": available,
+                "model": OPENAI_MODEL if available else None,
+                "reason": reason,
             }
             body = json.dumps(payload).encode("utf-8")
             self.send_response(200)

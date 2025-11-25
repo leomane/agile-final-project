@@ -135,12 +135,13 @@ async function loadOpenAIStatus() {
     if (!response.ok) throw new Error('Unable to read painter status');
     const config = await response.json();
     console.log('[SpliceSafari] /api/config payload:', config);
+    const reason = config.reason ? ` (${config.reason})` : '';
     if (config.openaiConfigured) {
       openaiStatusEl.textContent = `AI painter ready (${config.model})`;
       openaiStatusEl.classList.add('status-on');
       openaiStatusEl.classList.remove('status-off');
     } else {
-      openaiStatusEl.textContent = 'AI painter unavailable — using illustrated posters';
+      openaiStatusEl.textContent = `AI painter unavailable — using illustrated posters${reason}`;
       openaiStatusEl.classList.add('status-off');
       openaiStatusEl.classList.remove('status-on');
     }
