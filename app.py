@@ -7,6 +7,7 @@ from http.server import SimpleHTTPRequestHandler
 from typing import Optional, Tuple
 
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
+print(os.getenv("OPENAI_API_KEY"))
 
 
 def load_dotenv_if_present() -> None:
