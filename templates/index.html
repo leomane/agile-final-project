@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Splice Safari</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/static/style.css" />
+    <link rel="icon" type="image/svg+xml" href="/static/placeholder.svg" />
+  </head>
+  <body>
+    <main class="page">
+      <div class="noise"></div>
+      <div class="beams"></div>
+      <header class="hero">
+        <div class="hero-copy">
+          <div class="tag-row">
+            <span class="pill pill-ghost">Splice Safari</span>
+            <span id="openai-status" class="pill status-pill">Checking AI painter...</span>
+          </div>
+          <h1>Spin, splice, and unveil bold new creatures.</h1>
+          <p class="lede">
+            Dual roulette wheels pick two animals. Then the AI illustrator (or our built-in artist) paints a crisp poster and crowns your hybrid with a legendary name.
+          </p>
+          <div class="action-row">
+            <button id="spin" class="primary">Spin the wheels</button>
+            <p id="status" class="status">Ready to concoct a critter.</p>
+          </div>
+          <div class="micro-grid">
+            <div class="micro-card">
+              <p class="eyebrow">Realtime spins</p>
+              <p class="micro-copy">Watch the reels shuffle a menagerie of species with tactile motion.</p>
+            </div>
+            <div class="micro-card">
+              <p class="eyebrow">Poster-ready art</p>
+              <p class="micro-copy">AI-first images with elegant fallback illustrations on standby.</p>
+            </div>
+          </div>
+        </div>
+        <div class="control-panel">
+          <div class="panel-glow"></div>
+          <div class="panel-shell">
+            <div class="panel-head">
+              <p class="eyebrow">Roulette lab</p>
+              <p class="hint">Tap to spin each reel or hit the primary button.</p>
+            </div>
+            <div class="illustration">
+              <div class="wheel" id="wheel-1">
+                <div class="wheel-window">
+                  <span class="wheel-value">Lion</span>
+                </div>
+                <button class="wheel-handle" aria-label="Spin first wheel">↻</button>
+              </div>
+              <div class="wheel" id="wheel-2">
+                <div class="wheel-window">
+                  <span class="wheel-value">Panda</span>
+                </div>
+                <button class="wheel-handle" aria-label="Spin second wheel">↻</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <section class="result" aria-live="polite">
+        <div class="result-card">
+          <div class="result-text">
+            <p class="eyebrow">New species unlocked</p>
+            <h2 id="species-name">Waiting for the spin...</h2>
+            <p id="pairing" class="lede">
+              Pick two animals above to generate a mashup poster.
+            </p>
+          </div>
+          <div class="image-frame">
+            <div class="frame-chrome">
+              <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+              <span class="frame-label">Poster preview</span>
+            </div>
+            <img id="poster" alt="AI animal mashup poster" src="/static/placeholder.svg" />
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <script src="/static/app.js"></script>
+  </body>
+</html>
