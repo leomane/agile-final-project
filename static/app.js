@@ -6,6 +6,10 @@ const wheelContainers = [
   document.querySelector('#wheel-1'),
   document.querySelector('#wheel-2'),
 ];
+const wheelHandles = [
+  document.querySelector('#wheel-1 .wheel-handle'),
+  document.querySelector('#wheel-2 .wheel-handle'),
+];
 const spinButton = document.querySelector('#spin');
 const statusEl = document.querySelector('#status');
 const openaiStatusEl = document.querySelector('#openai-status');
@@ -18,6 +22,7 @@ console.log('[SpliceSafari] DOM hooks:', {
   wheels,
   wheelContainers,
   spinButton,
+  wheelHandles,
   statusEl,
   openaiStatusEl,
   speciesNameEl,
@@ -124,6 +129,14 @@ async function spinRoulette() {
 }
 
 spinButton.addEventListener('click', spinRoulette);
+wheelHandles.forEach((handle) => {
+  if (!handle) return;
+  handle.addEventListener('click', (event) => {
+    event.preventDefault();
+    console.log('[SpliceSafari] Wheel handle clicked; starting unified spin');
+    spinRoulette();
+  });
+});
 
 async function loadOpenAIStatus() {
   console.log('[SpliceSafari] Loading OpenAI status pill');
